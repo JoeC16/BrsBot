@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Moyola Park Golf Club",
+    "slug": "moyola"
+  },
+  {
+    "name": "Royal County Down",
+    "slug": "royal_county_down"
+  },
+  {
+    "name": "Royal Portrush",
+    "slug": "royal_portrush"
+  },
+  {
+    "name": "Portstewart Golf Club",
+    "slug": "portstewart"
+  },
+  {
+    "name": "Galgorm Castle",
+    "slug": "galgorm"
+  },
+  {
+    "name": "Ballyliffin Golf Club",
+    "slug": "ballyliffin"
+  },
+  {
+    "name": "The Belfry",
+    "slug": "the_belfry"
+  },
+  {
+    "name": "Wentworth",
+    "slug": "wentworth"
+  },
+  {
+    "name": "St Andrews Links",
+    "slug": "standrews"
+  },
+  {
+    "name": "Carnoustie",
+    "slug": "carnoustie"
+  },
+  {
+    "name": "Turnberry",
+    "slug": "turnberry"
+  },
+  {
+    "name": "Muirfield",
+    "slug": "muirfield"
+  },
+  {
+    "name": "Gleneagles",
+    "slug": "gleneagles"
+  },
+  {
+    "name": "Royal Troon",
+    "slug": "royal_troon"
+  },
+  {
+    "name": "Royal Liverpool",
+    "slug": "royal_liverpool"
+  },
+  {
+    "name": "Royal Birkdale",
+    "slug": "royal_birkdale"
+  },
+  {
+    "name": "Sunningdale",
+    "slug": "sunningdale"
+  },
+  {
+    "name": "Walton Heath",
+    "slug": "waltonheath"
+  },
+  {
+    "name": "Hillside Golf Club",
+    "slug": "hillside"
+  },
+  {
+    "name": "Formby Golf Club",
+    "slug": "formby"
+  }
+]
