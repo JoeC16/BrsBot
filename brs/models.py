@@ -1,9 +1,13 @@
 from datetime import datetime
-from sqlalchemy import create_engine, String, Integer, LargeBinary, Boolean, DateTime, Text, UniqueConstraint
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship, foreign
+from sqlalchemy import (
+    create_engine, String, Integer, LargeBinary, Boolean, DateTime, Text,
+    UniqueConstraint, ForeignKey
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker
 from .config import DATABASE_URL
 
-class Base(DeclarativeBase): pass
+class Base(DeclarativeBase):
+    pass
 
 class User(Base):
     __tablename__ = "users"
@@ -17,7 +21,7 @@ class User(Base):
 class Job(Base):
     __tablename__ = "jobs"
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(foreign(User.id), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     club_slug: Mapped[str] = mapped_column(String(64))
     course_id: Mapped[str] = mapped_column(String(16))
@@ -42,7 +46,7 @@ class Job(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    user: Mapped[User] = relationship(back_populates="jobs")
+    user: Mapped["User"] = relationship(back_populates="jobs")
 
     def player_ids(self) -> list[int]:
         return [int(x.strip()) for x in self.player_ids_csv.split(",") if x.strip()]
