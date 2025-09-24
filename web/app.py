@@ -1,20 +1,27 @@
-from flask import (
-    Flask, request, redirect, url_for, session,
-    render_template, render_template_string, abort, jsonify
-)
+import os, re, asyncio, httpx
+from pathlib import Path
+from flask import Flask, request, redirect, url_for, session, render_template, abort, jsonify
 from sqlalchemy import select, or_
 from brs.models import init_db, SessionLocal, User, Job, Club
-from brs.security import hash_password, verify_password, encrypt, decrypt
+from brs.security import hash_password, verify_password, encrypt
 from brs.config import SECRET_KEY
 from brs.engine import login as brs_login
-import re, asyncio, httpx
 from bs4 import BeautifulSoup
 
-BASE = "https://members.brsgolf.com"
-UA = ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 "
-      "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1")
+# --- Directories (point Flask one level up from /web) ---
+BASE_DIR = Path(__file__).resolve().parent       # /web
+PROJECT_ROOT = BASE_DIR.parent                   # repo root
 
-app = Flask(__name__)
+TEMPLATE_DIR = PROJECT_ROOT / "templates"
+STATIC_DIR   = PROJECT_ROOT / "static"
+
+# --- Flask setup ---
+app = Flask(
+    __name__,
+    template_folder=str(TEMPLATE_DIR),
+    static_folder=str(STATIC_DIR),
+    static_url_path="/static"
+)
 app.secret_key = SECRET_KEY
 init_db()
 
