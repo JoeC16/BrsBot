@@ -1,0 +1,130 @@
+:root{
+  --bg:#ffffff;
+  --surface:#fff;
+  --text:#0f172a;          /* slate-900 */
+  --muted:#64748b;         /* slate-500 */
+  --line:#e2e8f0;          /* slate-200 */
+  --primary:#1e90ff;       /* iOS-ish blue */
+  --shadow:0 12px 30px rgba(2,6,23,.06);
+  --radius:16px;
+}
+
+/* Reset-ish */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Layout */
+.container{
+  max-width:920px;
+  margin-inline:auto;
+  padding:24px clamp(16px, 4vw, 28px) max(24px, env(safe-area-inset-bottom));
+}
+
+.hero{
+  text-align:center;
+  margin:28px 0 18px;
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:clamp(24px, 5.4vw, 34px);
+  letter-spacing:.2px;
+}
+.hero .sub{
+  margin:0;
+  color:var(--muted);
+  font-size:clamp(14px, 3.6vw, 16px);
+}
+
+/* Forms grid — mobile first (1 column), 2 columns on wider screens */
+.forms{
+  display:grid;
+  gap:18px;
+  grid-template-columns:1fr;
+  margin-top:10px;
+}
+@media (min-width: 720px){
+  .forms{ grid-template-columns: 1fr 1fr; gap:22px; }
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px clamp(16px, 3vw, 22px);
+}
+.card h2{
+  margin:2px 0 6px;
+  font-size:clamp(18px, 4.2vw, 20px);
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-size:14px;
+  font-weight:600;
+}
+input{
+  width:100%;
+  margin-top:6px;
+  padding:14px 12px;
+  font-size:16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  outline:none;
+  transition:border-color .16s ease, box-shadow .16s ease;
+}
+input:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 4px rgba(59,130,246,.15);
+}
+
+/* Row with tiny link */
+.row{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:6px;
+}
+
+.primary{
+  margin-top:16px;
+  width:100%;
+  padding:15px 16px;
+  border:none;
+  border-radius:14px;
+  background:var(--primary);
+  color:#fff;
+  font-weight:700;
+  font-size:17px;
+  cursor:pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.primary:active{ transform:translateY(1px) }
+
+/* Text utilities */
+.small{ font-size:13px }
+.muted{ color:var(--muted) }
+a{ color:var(--primary); text-decoration:none }
+a:hover{ text-decoration:underline }
+
+/* Footer copy */
+.tos{
+  text-align:center;
+  margin:20px 0 0;
+}
+
+/* Better hit targets on iOS */
+input, button { -webkit-touch-callout: none; }
+
+/* Safe area support for iPhones with home indicator */
+@supports (padding:max(0px)){
+  .container{ padding-bottom:max(24px, env(safe-area-inset-bottom)); }
+}
