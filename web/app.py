@@ -1,4 +1,7 @@
-from flask import Flask, request, redirect, url_for, session, render_template_string, abort, jsonify
+from flask import (
+    Flask, request, redirect, url_for, session,
+    render_template, render_template_string, abort, jsonify
+)
 from sqlalchemy import select, or_
 from brs.models import init_db, SessionLocal, User, Job, Club
 from brs.security import hash_password, verify_password, encrypt, decrypt
@@ -15,6 +18,7 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 init_db()
 
+# === Dashboard page (kept as your original PAGE string) ===
 PAGE = """
 <!doctype html>
 <title>BRS Bot</title>
@@ -257,6 +261,7 @@ PAGE = """
 </script>
 """
 
+# === Helpers ===
 def get_user():
     uid = session.get("uid")
     if not uid: return None
@@ -266,28 +271,42 @@ def get_user():
     finally:
         db.close()
 
+# === Auth landing page (renders templates/auth.html) ===
+@app.get("/auth")
+def auth():
+    if get_user():
+        return redirect(url_for("home"))
+    return render_template("auth.html")
+
+# === Home/Dashboard (requires login) ===
 @app.get("/")
 def home():
     user = get_user()
+    if not user:
+        return redirect(url_for("auth"))
+
     jobs = []
-    if user:
-        db = SessionLocal()
-        try:
-            jobs = db.scalars(select(Job).where(Job.user_id==user.id).order_by(Job.id.desc())).all()
-        finally:
-            db.close()
+    db = SessionLocal()
+    try:
+        jobs = db.scalars(
+            select(Job).where(Job.user_id == user.id).order_by(Job.id.desc())
+        ).all()
+    finally:
+        db.close()
     return render_template_string(PAGE, user=user, jobs=jobs)
 
+# === Auth actions ===
 @app.post("/register")
 def register():
     email = request.form["email"].strip().lower()
     password = request.form["password"]
     db = SessionLocal()
     try:
-        if db.scalar(select(User).where(User.email==email)):
+        if db.scalar(select(User).where(User.email == email)):
             return "Email already registered", 400
         u = User(email=email, password_hash=hash_password(password))
         db.add(u); db.commit()
+        session["uid"] = u.id
     finally:
         db.close()
     return redirect(url_for("home"))
@@ -298,7 +317,7 @@ def login():
     password = request.form["password"]
     db = SessionLocal()
     try:
-        u = db.scalar(select(User).where(User.email==email))
+        u = db.scalar(select(User).where(User.email == email))
         if not u or not verify_password(u.password_hash, password):
             return "Invalid login", 401
         session["uid"] = u.id
@@ -309,8 +328,9 @@ def login():
 @app.get("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("home"))
+    return redirect(url_for("auth"))
 
+# === Job management ===
 @app.post("/jobs")
 def create_job():
     user = get_user()
@@ -371,7 +391,7 @@ def delete_job(job_id):
         db.close()
     return redirect(url_for("home"))
 
-# ---- Club resolver API ----
+# === Club resolver API (live probe + cache) ===
 def _norm(s: str) -> str:
     s = s.lower().strip()
     s = re.sub(r"(golf( club)?|g.c.|g&cc|g\s*&\s*c|\bgc\b)$", "", s)
@@ -435,7 +455,7 @@ async def api_clubs_search():
     finally:
         db.close()
 
-# ---- Player search API ----
+# === Player search API ===
 @app.post("/api/players/search")
 async def api_players_search():
     club = (request.args.get("club") or "").strip()
@@ -489,3 +509,16 @@ async def api_players_search():
             if pid and txt:
                 results.append({"id": int(pid), "text": txt})
         return jsonify({"results": results[:20]})
+
+# === Optional tiny placeholders for links in auth.html ===
+@app.get("/forgot")
+def forgot_password():
+    return "Password reset instructions coming soon.", 200
+
+@app.get("/terms")
+def terms():
+    return "Terms of Service placeholder.", 200
+
+@app.get("/privacy")
+def privacy():
+    return "Privacy Policy placeholder.", 200
